@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Científica</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(45deg, #8B4513 0%, #D2691E 50%, #CD853F 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 48, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 119, 198, 0.2) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .calculator {
+            background: linear-gradient(145deg, #2F2F2F, #1A1A1A);
+            border: 4px solid #8B4513;
+            border-radius: 8px;
+            box-shadow: 
+                inset 0 0 0 2px #D2691E,
+                0 0 20px rgba(0, 0, 0, 0.8),
+                0 0 40px rgba(139, 69, 19, 0.3);
+            padding: 25px;
+            max-width: 480px;
+            width: 100%;
+            position: relative;
+        }
+
+        .calculator::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            background: linear-gradient(45deg, #8B4513, #D2691E, #CD853F, #8B4513);
+            border-radius: 12px;
+            z-index: -1;
+        }
+
+        .title {
+            text-align: center;
+            color: #D2691E;
+            margin-bottom: 25px;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            letter-spacing: 2px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .display {
+            background: linear-gradient(145deg, #0F0F0F, #1A1A1A);
+            color: #00FF41;
+            border: 3px solid #8B4513;
+            border-radius: 4px;
+            padding: 15px;
+            text-align: right;
+            font-size: 22px;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 20px;
+            min-height: 60px;
+            word-wrap: break-word;
+            box-shadow: 
+                inset 0 0 10px rgba(0, 0, 0, 0.8),
+                inset 0 0 20px rgba(0, 255, 65, 0.1);
+            text-shadow: 0 0 5px #00FF41;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        button {
+            padding: 12px;
+            border: 3px solid;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            min-height: 50px;
+            position: relative;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .btn-number {
+            background: linear-gradient(145deg, #E6E6E6, #CCCCCC);
+            border-color: #8B4513 #654321 #654321 #8B4513;
+            color: #2F2F2F;
+            box-shadow: 
+                0 3px 0 #654321,
+                0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-operator {
+            background: linear-gradient(145deg, #FF6B35, #E55A2B);
+            border-color: #8B4513 #654321 #654321 #8B4513;
+            color: white;
+            box-shadow: 
+                0 3px 0 #654321,
+                0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-function {
+            background: linear-gradient(145deg, #D2691E, #B8571A);
+            border-color: #8B4513 #654321 #654321 #8B4513;
+            color: white;
+            box-shadow: 
+                0 3px 0 #654321,
+                0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-clear {
+            background: linear-gradient(145deg, #CD5C5C, #B04545);
+            border-color: #8B4513 #654321 #654321 #8B4513;
+            color: white;
+            box-shadow: 
+                0 3px 0 #654321,
+                0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-equals {
+            background: linear-gradient(145deg, #DAA520, #B8941A);
+            border-color: #8B4513 #654321 #654321 #8B4513;
+            color: white;
+            grid-column: span 2;
+            box-shadow: 
+                0 3px 0 #654321,
+                0 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 
+                0 4px 0 #654321,
+                0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 
+                0 1px 0 #654321,
+                0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .error {
+            color: #FF6B6B;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .history {
+            margin-top: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+            background: linear-gradient(145deg, #2F2F2F, #1A1A1A);
+            border: 2px solid #8B4513;
+            border-radius: 4px;
+            padding: 15px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .history h4 {
+            color: #D2691E;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .history-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #444;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #00FF41;
+            text-shadow: 0 0 3px #00FF41;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Efeito vintage de ruído */
+        .calculator::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(255, 255, 255, 0.03) 2px,
+                    rgba(255, 255, 255, 0.03) 4px
+                );
+            pointer-events: none;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1 class="title">CALCULADORA CIENTÍFICA RETRO</h1>
+        
+        <div class="display" id="display">0</div>
+        
+        <div class="buttons">
+            <!-- Primeira linha -->
+            <button class="btn-clear" onclick="clearDisplay()">C</button>
+            <button class="btn-clear" onclick="clearEntry()">CE</button>
+            <button class="btn-operator" onclick="appendToDisplay('(')">(</button>
+            <button class="btn-operator" onclick="appendToDisplay(')')">)</button>
+            <button class="btn-function" onclick="calculateFunction('sqrt')">√</button>
+            
+            <!-- Segunda linha -->
+            <button class="btn-function" onclick="calculateFunction('sin')">sin</button>
+            <button class="btn-function" onclick="calculateFunction('cos')">cos</button>
+            <button class="btn-function" onclick="calculateFunction('tan')">tan</button>
+            <button class="btn-function" onclick="calculateFunction('log')">log</button>
+            <button class="btn-function" onclick="calculateFunction('ln')">ln</button>
+            
+            <!-- Terceira linha -->
+            <button class="btn-number" onclick="appendToDisplay('7')">7</button>
+            <button class="btn-number" onclick="appendToDisplay('8')">8</button>
+            <button class="btn-number" onclick="appendToDisplay('9')">9</button>
+            <button class="btn-operator" onclick="appendToDisplay('/')">/</button>
+            <button class="btn-function" onclick="appendToDisplay('^')">x^y</button>
+            
+            <!-- Quarta linha -->
+            <button class="btn-number" onclick="appendToDisplay('4')">4</button>
+            <button class="btn-number" onclick="appendToDisplay('5')">5</button>
+            <button class="btn-number" onclick="appendToDisplay('6')">6</button>
+            <button class="btn-operator" onclick="appendToDisplay('*')">×</button>
+            <button class="btn-function" onclick="calculateFunction('factorial')">n!</button>
+            
+            <!-- Quinta linha -->
+            <button class="btn-number" onclick="appendToDisplay('1')">1</button>
+            <button class="btn-number" onclick="appendToDisplay('2')">2</button>
+            <button class="btn-number" onclick="appendToDisplay('3')">3</button>
+            <button class="btn-operator" onclick="appendToDisplay('-')">-</button>
+            <button class="btn-function" onclick="appendToDisplay('%')">%</button>
+            
+            <!-- Sexta linha -->
+            <button class="btn-number" onclick="appendToDisplay('0')">0</button>
+            <button class="btn-number" onclick="appendToDisplay('.')">.</button>
+            <button class="btn-operator" onclick="appendToDisplay('+')">+</button>
+            <button class="btn-equals" onclick="calculate()">=</button>
+        </div>
+        
+        <div class="error" id="error"></div>
+        
+        <div class="history" id="history" style="display: none;">
+            <h4>Histórico</h4>
+            <div id="history-items"></div>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let error = document.getElementById('error');
+        let history = document.getElementById('history');
+        let historyItems = document.getElementById('history-items');
+        let currentInput = '0';
+        let shouldResetDisplay = false;
+
+        function appendToDisplay(value) {
+            error.textContent = '';
+            
+            if (shouldResetDisplay) {
+                currentInput = '';
+                shouldResetDisplay = false;
+            }
+            
+            if (currentInput === '0' && value !== '.') {
+                currentInput = value;
+            } else {
+                currentInput += value;
+            }
+            
+            display.textContent = currentInput;
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            display.textContent = currentInput;
+            error.textContent = '';
+        }
+
+        function clearEntry() {
+            if (currentInput.length > 1) {
+                currentInput = currentInput.slice(0, -1);
+            } else {
+                currentInput = '0';
+            }
+            display.textContent = currentInput;
+            error.textContent = '';
+        }
+
+        async function calculate() {
+            try {
+                // Substitui operadores para o formato da API
+                let expression = currentInput
+                    .replace(/×/g, '*')
+                    .replace(/÷/g, '/');
+                
+                // Se contém operadores básicos, avalia a expressão
+                if (/[+\-*/^%]/.test(expression)) {
+                    let result = await evaluateExpression(expression);
+                    addToHistory(currentInput + ' = ' + result);
+                    currentInput = result.toString();
+                    display.textContent = currentInput;
+                    shouldResetDisplay = true;
+                }
+            } catch (e) {
+                error.textContent = 'Erro: ' + e.message;
+            }
+        }
+
+        async function calculateFunction(operation) {
+            try {
+                let value = parseFloat(currentInput);
+                if (isNaN(value)) {
+                    throw new Error('Valor inválido');
+                }
+
+                const response = await fetch(`/api/calculator/calculate-single?operation=${operation}&value=${value}`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                addToHistory(`${operation}(${value}) = ${data.result}`);
+                currentInput = data.result.toString();
+                display.textContent = currentInput;
+                shouldResetDisplay = true;
+                
+            } catch (e) {
+                error.textContent = 'Erro: ' + e.message;
+            }
+        }
+
+        async function evaluateExpression(expression) {
+            // Para expressões simples, separa em operandos e operador
+            let operators = ['+', '-', '*', '/', '^', '%'];
+            let operator = null;
+            let operatorIndex = -1;
+            
+            // Encontra o último operador (para respeitar precedência básica)
+            for (let i = expression.length - 1; i >= 0; i--) {
+                if (operators.includes(expression[i]) && i > 0) {
+                    operator = expression[i];
+                    operatorIndex = i;
+                    break;
+                }
+            }
+            
+            if (operator && operatorIndex > 0) {
+                let value1 = parseFloat(expression.substring(0, operatorIndex));
+                let value2 = parseFloat(expression.substring(operatorIndex + 1));
+                
+                if (isNaN(value1) || isNaN(value2)) {
+                    throw new Error('Valores inválidos');
+                }
+                
+                const requestBody = {
+                    value1: value1,
+                    value2: value2,
+                    operation: operator
+                };
+                
+                const response = await fetch('/api/calculator/calculate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                return data.result;
+            } else {
+                // Se não há operador, retorna o valor atual
+                return parseFloat(expression);
+            }
+        }
+
+        function addToHistory(item) {
+            history.style.display = 'block';
+            let historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.textContent = item;
+            historyItems.insertBefore(historyItem, historyItems.firstChild);
+            
+            // Limita o histórico a 10 itens
+            if (historyItems.children.length > 10) {
+                historyItems.removeChild(historyItems.lastChild);
+            }
+        }
+
+        // Suporte a teclado
+        document.addEventListener('keydown', function(event) {
+            event.preventDefault();
+            
+            if (event.key >= '0' && event.key <= '9' || event.key === '.') {
+                appendToDisplay(event.key);
+            } else if (['+', '-', '*', '/', '%'].includes(event.key)) {
+                appendToDisplay(event.key);
+            } else if (event.key === 'Enter' || event.key === '=') {
+                calculate();
+            } else if (event.key === 'Escape' || event.key === 'c' || event.key === 'C') {
+                clearDisplay();
+            } else if (event.key === 'Backspace') {
+                clearEntry();
+            }
+        });
+    </script>
+</body>
+</html>
